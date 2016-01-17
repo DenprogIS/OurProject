@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Timetable</string>
+    <string name="action_settings">Settings</string>
+    <string name="TimeText">Time</string>
+    <string name="EventText">Event</string>
+    <string name="blueString">blue</string>
+    <string name="music">Music</string>
+    <string name="sound_gain">soundGain</string>
+    <string name="sound_gain_transient">gainTransistent</string>
+    <string name="sound_gain_transient_duck">gainTransistentDuck</string>
+    <string name="servicesString1">StartService</string>
+    <string name="servicesString2">StopService</string>
+</resources>
