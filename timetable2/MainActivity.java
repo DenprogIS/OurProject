@@ -5,8 +5,6 @@ import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.provider.ContactsContract;
@@ -15,22 +13,20 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.GridView;
-import android.widget.Switch;
-import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public static ArrayList<String> Data = new ArrayList<String>();
+    private int globalId=0;
+
+     ArrayList<String> Data = new ArrayList<String>();
 
           //{"Time", "Event"};
     GridView gvMain;
@@ -42,25 +38,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        //my code
         Button speakButton = (Button) findViewById(R.id.button);
         speakButton.setOnClickListener(this);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
+        //my code
+
         adapter = new ArrayAdapter<String>(this, R.layout.item, R.id.tvText, Data);
         gvMain = (GridView) findViewById(R.id.gridView);
         gvMain.setAdapter(adapter);
         gvMain.setNumColumns(2);
 
-        Switch switch1 = (Switch) findViewById(R.id.switch1);
-        switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    startServise();
-                } else {
-                    stopServise();
-                }
-            }
-        });
     }
 
     @Override
@@ -91,6 +86,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Data.add(time);
                 Data.add(results.substring(results.indexOf(" ")));
                 update();
+                AlarmManager manager = (AlarmManager)getSystemService(
+                        Context.ALARM_SERVICE);
+                PendingIntent pi=createPendingResult(1337, new Intent(), 0);
+                manager.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 5000, pi);
             }else
             {
                 AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
@@ -109,31 +108,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         gvMain.setNumColumns(2);
     }
 
-    private void startServise()
-    {
-        Log.v(this.getClass().getName(), "onClick: Starting service.");
-        Intent intent =new Intent(this, ServiceExample.class);
-        intent.putExtra("time",Data);
-        startService(intent);
-    }
-
-    private void stopServise()
-    {
-        Log.v(this.getClass().getName(), "onClick: Stopping service.");
-        stopService(new Intent(this, ServiceExample.class));
-    }
-
     private String insertForString(String str,int index, char symbol)
     {
         StringBuffer s_buffer = new StringBuffer(str.subSequence(0, str.length()));
         s_buffer=s_buffer.insert(index, symbol);
         str=s_buffer.toString();
         return str;
-    }
-
-    public static ArrayList<String> getData()
-    {
-        return Data;
     }
 
     @Override
